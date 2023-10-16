@@ -3,7 +3,9 @@ import Navbar from './components/navbar'
 import {
   createBrowserRouter,
   RouterProvider,
-  useNavigate
+  useNavigate,
+  Link,
+  BrowserRouter
 } from "react-router-dom";
 import AddCharityForm from './pages/AddCharityForm';
 import Home from './pages/Home';
@@ -20,6 +22,7 @@ import {
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import logo from '../src/components/assests/images/logo1.png'
+import { Routes, Route } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -41,9 +44,9 @@ function getItem(
 
 
 const items: MenuItem[] = [
-  getItem('Home', '/', <PieChartOutlined />),
-  getItem('Form', '/form', <DesktopOutlined />),
-  getItem('List All', '/viewAll', <DesktopOutlined />),];
+  getItem('Home', '/', <Link to={"/"}><PieChartOutlined /></Link>),
+  getItem('Form', '/form', <Link to={"/form"}><DesktopOutlined /></Link>),
+  getItem('List All', '/viewAll', <Link to={"/viewall"}><DesktopOutlined /></Link>),];
 
   /* getItem('Register', 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
@@ -53,27 +56,9 @@ const items: MenuItem[] = [
   getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
   getItem('Files', '9', <FileOutlined />), */
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  }, 
-  {
-    path: '/post',
-    element: <SingleView />
-  },
-  {
-    path: "/form",
-    element: <AddCharityForm />,
-  },
-  {
-    path: "/viewAll",
-    element: <ViewAll/>,
-  },
-]);
+
 
 function App() {
-  const navigate=useNavigate()
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer },
@@ -81,14 +66,23 @@ function App() {
 
   return (
     <>
+      <BrowserRouter>
         <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <img style={{ width:collapsed? 80:200, padding:collapsed?3:9,paddingRight:0,transition: 'width 0.2s ease-in-out, padding 0.5s ease-in-out'}} src={logo} alt="react logo" />
         <div className="demo-logo-vertical" />
-      <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={({key})=>{navigate(key)}}/>
+      <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={({key})=>{}}/>
       </Sider>
-        <RouterProvider router={router} />
+      <Content>
+      <Routes>
+        <Route path='/' element={<Home/>}/>
+         <Route path= '/post' element= {<SingleView />}/>
+         <Route path= '/form' element= {<AddCharityForm />}/>
+         <Route path= '/viewall' element= {<ViewAll />}/>
+      </Routes>
+      </Content>
         </Layout>
+      </BrowserRouter>
     </>
   )
 }
