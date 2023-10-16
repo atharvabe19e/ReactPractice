@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react'
+import {
+  Link,
+} from "react-router-dom";
+import { useState } from 'react';
 import {
   DesktopOutlined,
-  FileOutlined,
   PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { Layout, Menu, theme } from 'antd';
+import logo from '../components/assests/images/logo1.png'
 
-const { Header, Content, Footer, Sider } = Layout;
+
+const {Sider} = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -28,16 +31,19 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
+  getItem('Home', '/', <Link to={"/"}><PieChartOutlined /></Link>),
+  getItem('Form', '/form', <Link to={"/form"}><DesktopOutlined /></Link>),
+  getItem('List All', '/viewAll', <Link to={"/viewall"}><DesktopOutlined /></Link>),];
+
+  /* getItem('Register', 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
     getItem('Bill', '4'),
     getItem('Alex', '5'),
   ]),
   getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9', <FileOutlined />),
-];
+  getItem('Files', '9', <FileOutlined />), */
+
+
 
 const SideBar: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -45,26 +51,13 @@ const SideBar: React.FC = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
+
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+        <img style={{ width:collapsed? 80:200, padding:collapsed?3:9,paddingRight:0,transition: 'width 0.2s ease-in-out, padding 0.5s ease-in-out'}} src={logo} alt="react logo" />
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+      <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={({key})=>{}}/>
       </Sider>
-      <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: '0 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
-          <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
-            Bill is a cat.
-          </div>
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
-      </Layout>
-    </Layout>
   );
 };
 
