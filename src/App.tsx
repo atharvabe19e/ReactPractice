@@ -9,7 +9,7 @@ import ViewAll from './pages/ViewAll';
 import { Layout} from 'antd';
 import { Routes, Route } from "react-router-dom";
 import SideBar from './components/sideBar';
-
+import Login from './pages/Login';
 
 
 function App() {
@@ -26,6 +26,7 @@ const { Content} = Layout;
          <Route path= '/post' element= {<SingleView />}/>
          <Route path= '/form' element= {<AddCharityForm />}/>
          <Route path= '/viewall' element= {<ViewAll />}/>
+         <Route path= '/login' element= {<Login />}/>
       </Routes>
       </Content>
         </Layout>

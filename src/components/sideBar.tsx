@@ -6,6 +6,8 @@ import { useState } from 'react';
 import {
   DesktopOutlined,
   PieChartOutlined,
+  LoginOutlined,
+  UnorderedListOutlined 
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, theme } from 'antd';
@@ -31,9 +33,10 @@ function getItem(
 }
 
 const items: MenuItem[] = [
+  getItem('Login', '/login', <Link to={"/login"}><LoginOutlined /></Link>),
   getItem('Home', '/', <Link to={"/"}><PieChartOutlined /></Link>),
   getItem('Form', '/form', <Link to={"/form"}><DesktopOutlined /></Link>),
-  getItem('List All', '/viewAll', <Link to={"/viewall"}><DesktopOutlined /></Link>),];
+  getItem('View', '/viewAll', <Link to={"/viewall"}><UnorderedListOutlined /></Link>)]
 
   /* getItem('Register', 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
@@ -54,7 +57,7 @@ const SideBar: React.FC = () => {
 
   return (
     <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-        <img style={{ width:collapsed? 80:200, padding:collapsed?3:9,paddingRight:0,transition: 'width 0.2s ease-in-out, padding 0.5s ease-in-out'}} src={logo} alt="react logo" />
+        <img style={{ width:collapsed? 80:200, padding:collapsed?3:9,transition: 'width 0.2s ease-in-out, padding 0.5s ease-in-out'}} src={logo} alt="react logo" />
         <div className="demo-logo-vertical" />
       <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={({key})=>{}}/>
       </Sider>

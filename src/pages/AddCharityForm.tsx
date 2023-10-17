@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
 import {AutoComplete, Select,} from 'antd';
+import { useNavigate } from 'react-router-dom';
+
 
 const AddCharityForm: React.FC = () => {
     const { Option } = Select;
+    const navigate = useNavigate();
 
     interface charity_data_format {
         username: string | null;
@@ -35,6 +38,10 @@ const AddCharityForm: React.FC = () => {
             body: JSON.stringify(charity_data)
         }).then(res => {
             if (res.ok) {
+                setTimeout(()=>{form.resetFields()},500)
+                alert("Charity added succesfully!!!")
+                navigate("/");
+
                 return res.json();
             }
         }).catch(error => {
@@ -69,6 +76,8 @@ const AddCharityForm: React.FC = () => {
         value: website,
     }));
 
+    const [form]=Form.useForm();
+
     return (
         <>
             <Form
@@ -80,6 +89,7 @@ const AddCharityForm: React.FC = () => {
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
+                form={form}
             >
 
                 <Form.Item
@@ -117,7 +127,6 @@ const AddCharityForm: React.FC = () => {
                         onChange={(e) => set_charity_data({ ...charity_data, email: e.target.value })}
                     />
                 </Form.Item>
-
 
                 <Form.Item
                     label="City"
@@ -186,7 +195,6 @@ const AddCharityForm: React.FC = () => {
                     </AutoComplete>
                 </Form.Item>
 
-
                 <Form.Item
                     label="Donation Link"
                     name="website2"
@@ -198,7 +206,6 @@ const AddCharityForm: React.FC = () => {
                             onChange={(e) => set_charity_data({ ...charity_data, donationlink: e.target.value })} />
                     </AutoComplete>
                 </Form.Item>
-
 
                 <Form.Item
                     label="Password"
@@ -232,7 +239,6 @@ const AddCharityForm: React.FC = () => {
                 >
                     <Input.Password />
                 </Form.Item>
-
 
                 <Form.Item
                     name="remember"
