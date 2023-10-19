@@ -2,19 +2,19 @@ import React from 'react'
 import {
   Link,
 } from "react-router-dom";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DesktopOutlined,
   PieChartOutlined,
   LoginOutlined,
-  UnorderedListOutlined 
+  UnorderedListOutlined
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, theme } from 'antd';
 import logo from '../components/assests/images/logo1.png'
 
 
-const {Sider} = Layout;
+const { Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -38,14 +38,6 @@ const items: MenuItem[] = [
   getItem('Form', '/form', <Link to={"/form"}><DesktopOutlined /></Link>),
   getItem('View', '/viewAll', <Link to={"/viewall"}><UnorderedListOutlined /></Link>)]
 
-  /* getItem('Register', 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]),
-  getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9', <FileOutlined />), */
-
 
 
 const SideBar: React.FC = () => {
@@ -54,13 +46,27 @@ const SideBar: React.FC = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
+  const [scrolloffset, setScrolloffset] = useState(window.scrollY);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolloffset(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  { console.log(scrolloffset) }
   return (
-    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-        <img style={{ width:collapsed? 80:200, padding:collapsed?3:9,transition: 'width 0.2s ease-in-out, padding 0.5s ease-in-out'}} src={logo} alt="react logo" />
-        <div className="demo-logo-vertical" />
-      <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={({key})=>{}}/>
-      </Sider>
+    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} style={{ paddingTop: scrolloffset,position:'relative' }} >
+      <img style={{ width: collapsed ? 80 : 200, padding: collapsed ? 3 : 9, transition: 'width 0.2s ease-in-out, padding 0.5s ease-in-out' }} src={logo} alt="react logo" />
+      <div className="demo-logo-vertical" />
+
+      <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+    </Sider>
+
   );
 };
 

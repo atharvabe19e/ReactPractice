@@ -1,5 +1,9 @@
+
+
 import React, { useState } from 'react';
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
+import DataViewModal from './assests/dataViewModal';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 
 interface DataTableProps {
@@ -76,7 +80,11 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
     const [data, setData] = useState(data1);
     const [editingKey, setEditingKey] = useState('');
 
+    const [deleteingKey, setDeleteingKey] = useState('');
+
     const isEditing = (record: Item) => record.key === editingKey;
+
+    const isDeleting = (record: Item) => record.key === deleteingKey;
 
     const edit = (record: Partial<Item> & { key: React.Key }) => {
         form.setFieldsValue({ name: '', location: '', phonenumber: '', ...record });
@@ -160,7 +168,16 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
         }
     };
 
-
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedData, setSelectedData] = useState<Item>();
+    const viewModal = (data: Item) => {
+        setSelectedData(data);
+        setModalVisible(true);
+    };
+    const closeModal = () => {
+        setModalVisible(false);
+    };
+    
     const columns = [
         {
             title: 'Id',
@@ -173,7 +190,17 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
             dataIndex: 'username',
             width: '30%',
             editable: true,
-        },
+            render: (username: string, record: Item) => (
+                <Typography.Link style={{ marginRight: 8 }} onClick={() => {
+                    viewModal(record)
+                    setModalVisible(true)
+                }}>
+                    {username}
+                </Typography.Link>
+            ),
+        }
+
+        ,
         {
             title: 'Location',
             dataIndex: 'city',
@@ -187,37 +214,56 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
             editable: true,
         },
         {
-            title: 'Operation',
+            title: 'Action',
             dataIndex: 'operation',
+            width: '10%',
             render: (_: any, record: Item) => {
                 const editable = isEditing(record);
-                return editable ? (
-                    <span>
-                        <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-                            Save
-                        </Typography.Link>
-                        <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                            <a>Cancel</a>
-                        </Popconfirm>
-                    </span>
+                const deleteable = isDeleting(record)
+                return editable || deleteable ? (
+
+                    editable ? (
+                        <span>
+                            <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
+                                <CheckOutlined style={{ fontSize: 20 }} />
+                            </Typography.Link>
+
+                            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+                                <CloseOutlined style={{ fontSize: 20 }} />
+                            </Popconfirm>
+                        </span>) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', color: 'red' }}>
+                            <div>
+                                DELETE?</div>
+                            <div>
+                                <Typography.Link onClick={() => {
+                                    deleteRow(record.key)
+                                    setDeleteingKey('')
+                                }}>
+                                    <CheckOutlined style={{ fontSize: 20 }} />
+                                </Typography.Link>
+                                ‎ ‎ ‎‎ ‎ ‎
+                                <Typography.Link onClick={() => {
+                                    setDeleteingKey('')
+                                }}>
+                                    <CloseOutlined style={{ fontSize: 20 }} />
+                                </Typography.Link>
+                            </div>
+                        </div>
+
+                    )
                 ) : (
-                    <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                        Edit
-                    </Typography.Link>
+                    <>
+                        <Popconfirm  title="" icon="" okText={"Delete"} cancelText={"Edit"} onConfirm={() => { setDeleteingKey(record.key) }} onCancel={() => { edit(record) }}>
+                            <a>Action</a>
+                        </Popconfirm>
+                    </>
+
 
                 );
             },
         },
-        {
-            title: 'Action',
-            dataIndex: '',
-            key: 'x',
-            render: (_: any, record: Item) => {
-                return (<Popconfirm title="Sure to delete?" onConfirm={() => { deleteRow(record.key) }}>
-                    <a>Delete</a>
-                </Popconfirm>)
-            }
-        },
+
     ];
 
     const mergedColumns = columns.map((col) => {
@@ -253,8 +299,10 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
                 }}
             />
         </Form>
+        <DataViewModal visible={modalVisible} onClose={closeModal} selectedData={selectedData} />
+
     </>
     )
 }
 
-export default DataTable
+export default DataTable	
