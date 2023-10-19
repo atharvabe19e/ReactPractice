@@ -1,38 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import DataTable from '../components/dataTable';
+import { useQuery } from '@tanstack/react-query';
+import { Spin } from 'antd';
 
 const ViewAll: React.FC = () => {
-  const [data1, set_data1] = useState<any[]>([]); // Assuming 'any[]' for simplicity, replace with actual type
-
-  const fetchData = async () => {
-    const url = new URL('https://652cc3a0d0d1df5273efa6e4.mockapi.io/charity/');
+  const fetchUserData = async (): Promise<any[]> => {
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'content-type': 'application/json' },
-      });
-      if (response.ok) {
-        const tasks = await response.json();
-        set_data1(tasks);
-      } else {
-        throw new Error('Error fetching data');
-      }
+      const response = await fetch('https://652cc3a0d0d1df5273efa6e4.mockapi.io/charity');
+      const data = await response.json();
+      setUserData(data)
+      return data
     } catch (error) {
-      console.error('Error fetching data:', error);
+      throw new Error('Error fetching user data');
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { data, error, isLoading=true } = useQuery({ queryKey: ['users'], queryFn: fetchUserData });
+
+  const [userData, setUserData] = useState<any[]>([]);
+
+  if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><Spin size="large" /></div>;
+  if (error) return <div>An error occurred: {JSON.stringify(error)}</div>;
+
+
+
 
   return (
     <>
-      {data1.length > 0 ? (
-        <DataTable data1={data1} />
-      ) : (
-        <h1>Loading...</h1>
-      )}
+        <DataTable data1={userData} />
     </>
   );
 };
