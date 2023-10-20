@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
 import DataViewModal from './assests/dataViewModal';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-
+import { useMutation, useQueryClient } from 'react-query';
 
 interface DataTableProps {
     data1: any[];
@@ -95,22 +95,35 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
         setEditingKey('');
     };
 
-    const updateData = (newData: Item, id: React.Key) => {
-        fetch(`https://652cc3a0d0d1df5273efa6e4.mockapi.io/charity/${id}`, {
-            method: 'PUT',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify(newData)
-        }).then(res => {
-            if (res.ok) {
-                console.log("success")
-                return res.json();
+
+
+    const queryClient = useQueryClient();
+    const mutation = useMutation(
+        async (temp: { key: React.Key, row: Item }) => {
+            const response = await fetch(`https://652cc3a0d0d1df5273efa6e4.mockapi.io/charity/${temp.key}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(temp.row),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-            console.log("error" + res)
-        })
-            .catch(error => {
-                console.log("error" + error)
-            })
-    }
+            else {
+                console.log("success")
+            }
+            console.log(response.json())
+            return response.json();
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries('UpdatedRow');
+            },
+        }
+    );
+
 
     const save = async (key: React.Key) => {
         //key is the id of selecred row
@@ -128,9 +141,10 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
                     ...item,
                     ...row,
                 });
-                //After above line new Data iist just theline that hass been edited
-                updateData(row, key)
-                setData(newData);
+                //After above line new Data iist just theline that hass been edited {row, key}
+                const temp: { key: React.Key, row: Item } = { row, key }
+                mutation.mutate(temp);
+                setData(newData)
                 setEditingKey('');
             } else {
                 newData.push(row);
@@ -143,25 +157,35 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
     };
 
 
-    const deleteAPI = (record: string | number) => {
-        fetch(`https://652cc3a0d0d1df5273efa6e4.mockapi.io/charity/${record}`, {
-            method: 'DELETE',
-        }).then(res => {
-            if (res.ok) {
-                return res.ok;
+    const mutationDel = useMutation(
+        async (record:string | number) => {
+            const response = await fetch(`https://652cc3a0d0d1df5273efa6e4.mockapi.io/charity/${record}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        })
-            .catch(error => {
-                console.log(error)
-            })
-    }
+            else {
+                console.log("success")
+            }
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries('DeleteRow');
+            },
+        }
+    );
 
 
     const deleteRow = async (record: string | number) => {
         try {
             const newData = [...data];
             const updatedData = newData.filter(item => item.key !== record);
-            deleteAPI(record)
+            mutationDel.mutate(record)
             setData(updatedData);
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -177,7 +201,7 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
     const closeModal = () => {
         setModalVisible(false);
     };
-    
+
     const columns = [
         {
             title: 'Id',
@@ -254,7 +278,7 @@ const DataTable: React.FC<DataTableProps> = ({ data1 }) => {
                     )
                 ) : (
                     <>
-                        <Popconfirm  title="" icon="" okText={"Delete"} cancelText={"Edit"} onConfirm={() => { setDeleteingKey(record.key) }} onCancel={() => { edit(record) }}>
+                        <Popconfirm title="" icon="" okText={"Delete"} cancelText={"Edit"} onConfirm={() => { setDeleteingKey(record.key) }} onCancel={() => { edit(record) }}>
                             <a>Action</a>
                         </Popconfirm>
                     </>

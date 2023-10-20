@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DataTable from '../components/dataTable';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from 'react-query';
 import { Spin } from 'antd';
 
 const ViewAll: React.FC = () => {
