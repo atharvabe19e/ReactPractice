@@ -27,7 +27,11 @@ const ViewAll: React.FC = () => {
 
   return (
     <>
-        <DataTable data1={userData} />
+    <div style={{height: "100vh"}}>
+      {userData.length >2 && !isLoading?
+        <DataTable data1={userData} />:
+        (<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}><Spin size="large" /></div>)}
+        </div>
     </>
   );
 };

@@ -2,48 +2,53 @@ import React, { useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useStore } from '../components/zustand';
 
 const Login: React.FC = () => {
-    const onFinish = (values: any) => {
-        if (values?.username === "aa" && values?.password === 'aa') {
-            console.log('Received values of form: ', values?.username);
-            alert("User Logged in Succesfully!!!")
+    
+    var loginSuccess = useStore(state => state.loginSuccess)
+    const onFinish = () => {
+        if (!loginSuccess){
+        if (password == "asd") {
+            setUsername(tempUsername)
+            console.log(username)
+            setLoginSuccess(true)
             navigate("/");
         }
         else
-        alert("Incorrect Username or Password")
+            alert("Incorrect Username or Password")
+    };}
 
-    };
-
+   
+    
     const navigate = useNavigate();
 
-    interface login_data_format {
-        username: string | null;
-        password: string | null;
-    }
-
-    const [login_data, set_login_data] = useState<login_data_format>({
-        username: null,
-        password: null
-    });
+    var username = useStore(state => state.username)
+    var setUsername = useStore(state => state.setUsername)
+    var setLoginSuccess = useStore(state => state.setLoginSuccess)
+    const [password, setPassword] = useState<string | null>('');
+    const [tempUsername, setTempUsername] = useState<string | null>('');
+    
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', width: '100%', border: '2px solid #000', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: "100vh", width: '100%', border: '2px solid #000', flexDirection: 'column' }}>
+            {!loginSuccess?(
             <Form
                 name="normal_login"
                 className="login-form"
                 initialValues={{ remember: true }}
-                onFinish={onFinish}
             >
                 <Form.Item
                     name="username"
                     rules={[{ required: true, message: 'Please input your Username!' }]}
                 >
-                    <Input prefix={<UserOutlined className="site-form-item-icon" />} 
-                    value={login_data.username || ''}
-                    onChange={(e) => set_login_data({ ...login_data, username: e.target.value })}
-               
-                    placeholder="Username" />
+                    <Input prefix={<UserOutlined className="site-form-item-icon" />}
+                        value={username}
+                        onChange={(e) => {
+                            console.log(username)
+                            setTempUsername(e.target.value)
+                        }}
+                        placeholder="Username" />
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -52,8 +57,11 @@ const Login: React.FC = () => {
                     <Input
                         prefix={<LockOutlined className="site-form-item-icon" />}
                         type="password"
-                        value={login_data.password || ''}
-                        onChange={(e) => set_login_data({ ...login_data, password: e.target.value })}
+                        value={password || ''}
+                        onChange={(e) => {
+                            setPassword(e.target.value)
+                            console.log(password)
+                        }}
                         placeholder="Password"
                     />
                 </Form.Item>
@@ -68,12 +76,17 @@ const Login: React.FC = () => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className="login-form-button" >
+                    <Button type="primary" htmlType="submit" className="login-form-button" onClick={() => {onFinish()}}>
                         Log in
-                    </Button>
+                    </Button >
                     ‎  Or <a href="/">Register </a>
                 </Form.Item>
-            </Form>
+            </Form>):(
+            <>
+            <text>Already Logged In</text>
+            <button onClick={setLoginSuccess(false)}> log out??</button>
+            </>)}
+
         </div>
     );
 };

@@ -36,7 +36,7 @@ const items: MenuItem[] = [
   getItem('Login', '/login', <Link to={"/login"}><LoginOutlined /></Link>),
   getItem('Home', '/', <Link to={"/"}><PieChartOutlined /></Link>),
   getItem('Form', '/form', <Link to={"/form"}><DesktopOutlined /></Link>),
-  getItem('View', '/viewAll', <Link to={"/viewall"}><UnorderedListOutlined /></Link>)]
+  getItem('View', '/ViewAll', <Link to={"/Viewall"}><UnorderedListOutlined /></Link>)]
 
 
 
